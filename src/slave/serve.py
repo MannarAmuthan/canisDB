@@ -8,10 +8,11 @@ class BridgeServicer(replication_pb2_grpc.BridgeServicer):
         print(f"Received request from {request.name}")
         return replication_pb2.Response(message=f"Hello, {request.name}!", status_code=f"100")
 
-def serve():
+
+def serve(port: int):
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
     replication_pb2_grpc.add_BridgeServicer_to_server(BridgeServicer(), server)
-    server.add_insecure_port('[::]:50051')
-    print("Server starting on port 50051...")
+    server.add_insecure_port(f'[::]:{port}')
+    print(f"grpc Server starting on port {port}...")
     server.start()
     server.wait_for_termination()
