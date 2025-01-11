@@ -1,0 +1,18 @@
+*.py[cod]
+*$py.class
+.coverage
+.python-version
+.venv
+# SSH keyfile
+.keyfile
+
+.idea/*
+*.DS_Store
+venv-local/*
+src/__pycache__/
+.pytest_cache/
+/.mypy_cache/
+/venv
+/node_modules/
+
+whispers-findings.out

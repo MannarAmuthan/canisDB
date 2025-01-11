@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package replication;
+
+service Bridge {
+  rpc Replicate (Command) returns (Response) {}
+}
+
+message Command {
+  string name = 1;
+}
+
+message Response {
+  string message = 1;
+  string status_code = 2;
+}
