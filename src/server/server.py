@@ -7,7 +7,7 @@ from typing import Dict, Any
 
 class DatabaseServer:
     def __init__(self,
-                 host: str = 'localhost',
+                 host: str = '0.0.0.0',
                  port: int = 5432):
         self.host = host
         self.port = port
@@ -22,10 +22,14 @@ class DatabaseServer:
         print(f"Database Server listening on {self.host}:{self.port}")
 
         while True:
-            client, address = self.socket.accept()
-            print(f"Connection from {address}")
-            client_thread = threading.Thread(target=self.handle_client, args=(client,))
-            client_thread.start()
+            try:
+                print(f"Starting to listen")
+                client, address = self.socket.accept()
+                print(f"Connection from {address}")
+                client_thread = threading.Thread(target=self.handle_client, args=(client,))
+                client_thread.start()
+            except Exception as e:
+                print(f"Connection error on {e}")
 
     def handle_client(self, client_socket: socket.socket):
         """Handle individual client connections"""
@@ -36,14 +40,14 @@ class DatabaseServer:
                 if not data:
                     break
 
-
                 command = json.loads(data)
                 response = self.execute_query(command)
-
 
                 client_socket.send(json.dumps(response).encode())
 
             except Exception as e:
+                print("Error in connecting")
+                print(e)
                 error_response = {"status": "error", "message": str(e)}
                 client_socket.send(json.dumps(error_response).encode())
                 break

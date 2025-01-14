@@ -1,0 +1,21 @@
+services:
+  canis-slave:
+    build: .
+    ports:
+      - 5012:5012
+    command: python3 main.py slave --grpc_port=50051 --port=5012
+    networks:
+      - my-network
+
+  canis-master:
+    build: .
+    ports:
+      - 5003:5003
+      - 50051:50051
+    command: python3 main.py master --server_url="localhost:50051" --port=5003
+    networks:
+      - my-network
+
+networks:
+  my-network:
+    driver: bridge

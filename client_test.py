@@ -27,14 +27,23 @@ class DatabaseClient:
         self.socket.close()
 
 
-client = DatabaseClient("localhost",5001)
+try:
+    client = DatabaseClient("127.0.0.1", 5012)
+
+    print(client.execute("""
+        CREATE TABLE IF NOT EXISTS central_kv_store (
+            key TEXT UNIQUE,
+            value TEXT
+        )
+    """))
+
+    client.close()
+
+except ConnectionRefusedError:
+    print("Connection failed - server might not be running")
+except json.JSONDecodeError:
+    print("Received invalid JSON response from server")
+except Exception as e:
+    print(f"Error: {str(e)}")
 
 
-print(client.execute("""
-    CREATE TABLE IF NOT EXISTS central_kv_store (
-        key TEXT UNIQUE,
-        value TEXT
-    )
-"""))
-
-client.close()
