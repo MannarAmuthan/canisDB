@@ -1,20 +1,70 @@
 services:
-  canis-slave:
+  canis-slave-1:
     build: .
     ports:
       - 5012:5012
-    command: python3 main.py slave --grpc_port=50051 --port=5012
+    command: python3 src/main.py slave --grpc_port=50051 --port=5012
     networks:
       - my-network
+    volumes:
+      - canis-1:/app
+
+  canis-slave-2:
+    build: .
+    ports:
+      - 5013:5012
+    command: python3 src/main.py slave --grpc_port=50051 --port=5012
+    networks:
+      - my-network
+    volumes:
+      - canis-2:/app
+
+  canis-slave-3:
+    build: .
+    ports:
+      - 5014:5012
+    command: python3 src/main.py slave --grpc_port=50051 --port=5012
+    networks:
+      - my-network
+    volumes:
+      - canis-3:/app
 
   canis-master:
     build: .
     ports:
       - 5003:5003
       - 50051:50051
-    command: python3 main.py master --server_url="localhost:50051" --port=5003
+    command: python3 src/main.py master --server_url="localhost:50051" --port=5003
     networks:
       - my-network
+    volumes:
+      - canis-master:/app
+
+volumes:
+  canis-1:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: .
+  canis-2:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: .
+  canis-3:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: .
+  canis-master:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: .
 
 networks:
   my-network:

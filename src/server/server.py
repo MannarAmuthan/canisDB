@@ -7,12 +7,12 @@ from typing import Dict, Any
 
 class DatabaseServer:
     def __init__(self,
-                 host: str = '0.0.0.0',
-                 port: int = 5432):
+                 host,
+                 port):
         self.host = host
         self.port = port
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.conn = sqlite3.connect('coordinator_init.db', check_same_thread=False)
+        self.conn = sqlite3.connect('database.db', check_same_thread=False)
         self.cursor = self.conn.cursor()
         self.lock = threading.Lock()
 

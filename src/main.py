@@ -10,7 +10,7 @@ GRPC_SERVER_PORT = 5002
 
 
 def start_server(port):
-    db_server = DatabaseServer(port=port)
+    db_server = DatabaseServer(host='0.0.0.0',port=port)
     db_server.start()
 
 
