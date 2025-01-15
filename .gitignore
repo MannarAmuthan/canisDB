@@ -15,4 +15,6 @@ src/__pycache__/
 /venv
 /node_modules/
 
+local
+
 whispers-findings.out

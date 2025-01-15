@@ -1,8 +1,12 @@
 import json
+import os
 import socket
 import sqlite3
 import threading
+from pathlib import Path
 from typing import Dict, Any
+
+from context import Context
 
 
 class DatabaseServer:
@@ -12,7 +16,8 @@ class DatabaseServer:
         self.host = host
         self.port = port
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.conn = sqlite3.connect('database.db', check_same_thread=False)
+        Path(f"local/{Context.get_id()}").mkdir(parents=True, exist_ok=True)
+        self.conn = sqlite3.connect(f'local/{Context.get_id()}/database.db', check_same_thread=False)
         self.cursor = self.conn.cursor()
         self.lock = threading.Lock()
 

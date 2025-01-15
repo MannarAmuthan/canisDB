@@ -3,7 +3,7 @@ services:
     build: .
     ports:
       - 5012:5012
-    command: python3 src/main.py slave --grpc_port=50051 --port=5012
+    command: python3 src/main.py slave --grpc_port=50051 --port=5012 --id=1
     networks:
       - my-network
     volumes:
@@ -13,7 +13,7 @@ services:
     build: .
     ports:
       - 5013:5012
-    command: python3 src/main.py slave --grpc_port=50051 --port=5012
+    command: python3 src/main.py slave --grpc_port=50051 --port=5012 --id=2
     networks:
       - my-network
     volumes:
@@ -23,7 +23,7 @@ services:
     build: .
     ports:
       - 5014:5012
-    command: python3 src/main.py slave --grpc_port=50051 --port=5012
+    command: python3 src/main.py slave --grpc_port=50051 --port=5012 --id=3
     networks:
       - my-network
     volumes:
@@ -34,7 +34,7 @@ services:
     ports:
       - 5003:5003
       - 50051:50051
-    command: python3 src/main.py master --server_url="localhost:50051" --port=5003
+    command: python3 src/main.py master --server_url="localhost:50051" --port=5003 --id=4
     networks:
       - my-network
     volumes:
