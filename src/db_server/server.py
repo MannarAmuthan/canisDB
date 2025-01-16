@@ -7,6 +7,8 @@ from pathlib import Path
 from typing import Dict, Any
 
 from context import Context
+from db_logger import QueryLogger, WALLogger
+from sql.classifier import is_write_operation
 
 
 class DatabaseServer:
@@ -16,10 +18,12 @@ class DatabaseServer:
         self.host = host
         self.port = port
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        Path(f"local/{Context.get_id()}").mkdir(parents=True, exist_ok=True)
-        self.conn = sqlite3.connect(f'local/{Context.get_id()}/database.db', check_same_thread=False)
+        Path(Context.get_folder()).mkdir(parents=True, exist_ok=True)
+        self.conn = sqlite3.connect(f'{Context.get_folder()}/database.db', check_same_thread=False)
         self.cursor = self.conn.cursor()
         self.lock = threading.Lock()
+        self.transaction_logger = QueryLogger.get_logger()
+        self.wal_logger = WALLogger.get_logger()
 
     def start(self):
         self.socket.bind((self.host, self.port))
@@ -46,6 +50,12 @@ class DatabaseServer:
                     break
 
                 command = json.loads(data)
+                self.transaction_logger.info(msg=command)
+
+                if is_write_operation(command['query']):
+                    print("Logging into WAL")
+                    self.wal_logger.info(msg=command)
+
                 response = self.execute_query(command)
 
                 client_socket.send(json.dumps(response).encode())

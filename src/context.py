@@ -2,9 +2,11 @@ class Context:
     """A static class to hold and manage application-wide configuration."""
     _id = None
     _mode = None
-    _db_server_port = 5432  # Default database server port
-    _grpc_server_port = 50051  # Default gRPC server port
+    _db_server_port = 5432  # Default database db_server port
+    _grpc_server_port = 50051  # Default gRPC db_server port
     _server_url = ""
+    _verbose_mode = False
+    _folder = ""
 
     # Getters and Setters
     @classmethod
@@ -30,7 +32,7 @@ class Context:
     @classmethod
     def set_db_server_port(cls, value):
         if not isinstance(value, int):
-            raise ValueError("Database server port must be an integer.")
+            raise ValueError("Database db_server port must be an integer.")
         cls._db_server_port = value
 
     @classmethod
@@ -40,7 +42,7 @@ class Context:
     @classmethod
     def set_grpc_server_port(cls, value):
         if not isinstance(value, int):
-            raise ValueError("gRPC server port must be an integer.")
+            raise ValueError("gRPC db_server port must be an integer.")
         cls._grpc_server_port = value
 
     @classmethod
@@ -50,3 +52,21 @@ class Context:
     @classmethod
     def set_server_url(cls, value):
         cls._server_url = value
+
+
+    @classmethod
+    def get_verbose_mode(cls):
+        return cls._verbose_mode
+
+    @classmethod
+    def set_verbose(cls, value):
+        cls._verbose_mode = value
+
+
+    @classmethod
+    def get_folder(cls):
+        return cls._folder
+
+    @classmethod
+    def set_folder(cls, value):
+        cls._folder = value

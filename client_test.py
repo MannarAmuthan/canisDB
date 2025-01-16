@@ -9,7 +9,7 @@ class DatabaseClient:
         self.socket.connect((host, port))
 
     def execute(self, query: str, params: list = None) -> Dict[str, Any]:
-        """Execute a query on the database server"""
+        """Execute a query on the database db_server"""
         if params is None:
             params = []
 
@@ -28,7 +28,7 @@ class DatabaseClient:
 
 
 try:
-    client = DatabaseClient("127.0.0.1", 5012)
+    client = DatabaseClient("127.0.0.1", 5014)
 
     print(client.execute("""
         CREATE TABLE IF NOT EXISTS central_kv_store (
@@ -40,9 +40,9 @@ try:
     client.close()
 
 except ConnectionRefusedError:
-    print("Connection failed - server might not be running")
+    print("Connection failed - db_server might not be running")
 except json.JSONDecodeError:
-    print("Received invalid JSON response from server")
+    print("Received invalid JSON response from db_server")
 except Exception as e:
     print(f"Error: {str(e)}")
 
