@@ -2,8 +2,8 @@ class Context:
     """A static class to hold and manage application-wide configuration."""
     _id = None
     _mode = None
-    _db_server_port = 5432  # Default database db_server port
-    _grpc_server_port = 50051  # Default gRPC db_server port
+    _db_server_port = None
+    _grpc_server_port = None
     _server_url = ""
     _verbose_mode = False
     _folder = ""
@@ -53,7 +53,6 @@ class Context:
     def set_server_url(cls, value):
         cls._server_url = value
 
-
     @classmethod
     def get_verbose_mode(cls):
         return cls._verbose_mode
@@ -61,7 +60,6 @@ class Context:
     @classmethod
     def set_verbose(cls, value):
         cls._verbose_mode = value
-
 
     @classmethod
     def get_folder(cls):

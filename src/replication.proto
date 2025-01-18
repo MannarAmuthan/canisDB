@@ -7,7 +7,7 @@ service Bridge {
 }
 
 message Command {
-  string name = 1;
+  string query = 1;
 }
 
 message Response {

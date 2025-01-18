@@ -1,0 +1,20 @@
+{
+  "services": {
+    "1": {
+      "name": "canis-rep-1",
+      "replication_port": "5022"
+    },
+    "2": {
+      "name": "canis-rep-2",
+      "replication_port": "5022"
+    },
+    "3": {
+      "name": "canis-rep-3",
+      "replication_port": "5022"
+    },
+    "4": {
+      "name": "canis-rep-4",
+      "replication_port": "5022"
+    }
+  }
+}

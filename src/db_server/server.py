@@ -8,15 +8,18 @@ from typing import Dict, Any
 
 from context import Context
 from db_logger import QueryLogger, WALLogger
+from db_server.client import DatabaseClient
 from sql.classifier import is_write_operation
 
 
 class DatabaseServer:
     def __init__(self,
                  host,
-                 port):
+                 port,
+                 replication_port):
         self.host = host
         self.port = port
+        self.replication_port = replication_port
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         Path(Context.get_folder()).mkdir(parents=True, exist_ok=True)
         self.conn = sqlite3.connect(f'{Context.get_folder()}/database.db', check_same_thread=False)
@@ -40,7 +43,22 @@ class DatabaseServer:
             except Exception as e:
                 print(f"Connection error on {e}")
 
-    def handle_client(self, client_socket: socket.socket):
+    def start_for_replication(self):
+        self.socket.bind((self.host, self.replication_port))
+        self.socket.listen(5)
+        print(f"Database Server listening on {self.host}:{self.replication_port}")
+
+        while True:
+            try:
+                print(f"Starting to listen for replication")
+                client, address = self.socket.accept()
+                print(f"Connection from {address}")
+                client_thread = threading.Thread(target=self.handle_client, args=(client, False))
+                client_thread.start()
+            except Exception as e:
+                print(f"Connection error on {e}")
+
+    def handle_client(self, client_socket: socket.socket, should_replication=True):
         """Handle individual client connections"""
         while True:
             try:
@@ -55,6 +73,16 @@ class DatabaseServer:
                 if is_write_operation(command['query']):
                     print("Logging into WAL")
                     self.wal_logger.info(msg=command)
+                    if should_replication:
+                        services = json.load(open("config.json"))['services']
+                        for service_id, service_prop in services.items():
+                            service_name = service_prop['name']
+                            service_port = service_prop['replication_port']
+                            if service_id != Context.get_id():
+                                print(f"Replicating to {service_name}:{service_port} from {Context.get_id()}")
+                                client = DatabaseClient()
+                                client.execute(service_name, int(service_port), command['query'])
+                                print(f"Successfully replicated to {service_name}:{service_port} from {Context.get_id()}")
 
                 response = self.execute_query(command)
 

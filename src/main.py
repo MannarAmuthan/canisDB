@@ -2,17 +2,21 @@ import argparse
 import threading
 
 from context import Context
-from master import replicate
 from db_server.server import DatabaseServer
-from slave import receive
 
 DEFAULT_DATABASE_SERVER_PORT = 5012
+DEFAULT_DATABASE_REPLICATION_PORT = 5022
 GRPC_SERVER_PORT = 50051
 
 
 def start_server(port):
-    db_server = DatabaseServer(host='0.0.0.0', port=port)
+    db_server = DatabaseServer(host='0.0.0.0', port=port, replication_port=DEFAULT_DATABASE_REPLICATION_PORT)
     db_server.start()
+
+
+def start_replication_server(port):
+    db_server = DatabaseServer(host='0.0.0.0', port=port, replication_port=DEFAULT_DATABASE_REPLICATION_PORT)
+    db_server.start_for_replication()
 
 
 def initialize_and_get_configurations(parsed_args):
@@ -43,9 +47,6 @@ if __name__ == "__main__":
     database_server_thread = threading.Thread(target=start_server, args=(Context.get_db_server_port(),))
     database_server_thread.start()
 
-    # if args.mode == 'master':
-    #     if args.server_url:
-    #         replicate(args.server_url)
-    # if args.mode == 'slave':
-    #     if args.grpc_port:
-    #         receive(args.grpc_port)
+    database_replication_thread = threading.Thread(target=start_replication_server,
+                                                   args=(Context.get_db_server_port(),))
+    database_replication_thread.start()
