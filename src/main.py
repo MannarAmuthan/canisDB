@@ -3,6 +3,7 @@ import threading
 
 from context import Context
 from db_server.server import DatabaseServer
+from app_logger import Logger
 
 DEFAULT_DATABASE_SERVER_PORT = 5012
 DEFAULT_DATABASE_REPLICATION_PORT = 5022
@@ -43,7 +44,9 @@ if __name__ == "__main__":
 
     initialize_and_get_configurations(args)
 
-    print("Starting database db_server")
+    logger = Logger.get_logger()
+
+    logger.info("Starting database db_server")
     database_server_thread = threading.Thread(target=start_server, args=(Context.get_db_server_port(),))
     database_server_thread.start()
 

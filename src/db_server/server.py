@@ -1,5 +1,4 @@
 import json
-import os
 import socket
 import sqlite3
 import threading
@@ -10,6 +9,8 @@ from context import Context
 from db_logger import QueryLogger, WALLogger
 from db_server.client import DatabaseClient
 from sql.classifier import is_write_operation
+
+from app_logger import Logger
 
 
 class DatabaseServer:
@@ -27,36 +28,37 @@ class DatabaseServer:
         self.lock = threading.Lock()
         self.transaction_logger = QueryLogger.get_logger()
         self.wal_logger = WALLogger.get_logger()
+        self.logger = Logger.get_logger()
 
     def start(self):
         self.socket.bind((self.host, self.port))
         self.socket.listen(5)
-        print(f"Database Server listening on {self.host}:{self.port}")
+        self.logger.info(f"Database Server listening on {self.host}:{self.port}")
 
         while True:
             try:
-                print(f"Starting to listen")
+                self.logger.info(f"Starting to listen")
                 client, address = self.socket.accept()
-                print(f"Connection from {address}")
+                self.logger.info(f"Connection from {address}")
                 client_thread = threading.Thread(target=self.handle_client, args=(client,))
                 client_thread.start()
             except Exception as e:
-                print(f"Connection error on {e}")
+                self.logger.info(f"Connection error on {e}")
 
     def start_for_replication(self):
         self.socket.bind((self.host, self.replication_port))
         self.socket.listen(5)
-        print(f"Database Server listening on {self.host}:{self.replication_port}")
+        self.logger.info(f"Database Server listening on {self.host}:{self.replication_port}")
 
         while True:
             try:
-                print(f"Starting to listen for replication")
+                self.logger.info(f"Starting to listen for replication")
                 client, address = self.socket.accept()
-                print(f"Connection from {address}")
+                self.logger.info(f"Connection from {address}")
                 client_thread = threading.Thread(target=self.handle_client, args=(client, False))
                 client_thread.start()
             except Exception as e:
-                print(f"Connection error on {e}")
+                self.logger.info(f"Connection error on {e}")
 
     def handle_client(self, client_socket: socket.socket, should_replication=True):
         """Handle individual client connections"""
@@ -71,7 +73,7 @@ class DatabaseServer:
                 self.transaction_logger.info(msg=command)
 
                 if is_write_operation(command['query']):
-                    print("Logging into WAL")
+                    self.logger.info("Logging into WAL")
                     self.wal_logger.info(msg=command)
                     if should_replication:
                         services = json.load(open("config.json"))['services']
@@ -79,18 +81,18 @@ class DatabaseServer:
                             service_name = service_prop['name']
                             service_port = service_prop['replication_port']
                             if service_id != Context.get_id():
-                                print(f"Replicating to {service_name}:{service_port} from {Context.get_id()}")
+                                self.logger.info(f"Replicating to {service_name}:{service_port} from {Context.get_id()}")
                                 client = DatabaseClient()
                                 client.execute(service_name, int(service_port), command['query'])
-                                print(f"Successfully replicated to {service_name}:{service_port} from {Context.get_id()}")
+                                self.logger.info(f"Successfully replicated to {service_name}:{service_port} from {Context.get_id()}")
 
                 response = self.execute_query(command)
 
                 client_socket.send(json.dumps(response).encode())
 
             except Exception as e:
-                print("Error in connecting")
-                print(e)
+                self.logger.info("Error in connecting")
+                self.logger.info(e)
                 error_response = {"status": "error", "message": str(e)}
                 client_socket.send(json.dumps(error_response).encode())
                 break
