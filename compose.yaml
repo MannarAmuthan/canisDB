@@ -32,7 +32,7 @@ services:
       - 5015:5012
       - 5025:5022
       - 50051:50051
-    command: python3 src/main.py --server_url="localhost:50051" --id=4 --folder="local"
+    command: python3 src/main.py --id=4 --folder="local"
     volumes:
       - canis-4:/app
 

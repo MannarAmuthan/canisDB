@@ -3,7 +3,7 @@ import socket
 from typing import Dict, Any
 
 
-class DatabaseClient:
+class LocalDatabaseClient:
     def __init__(self, host, port):
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.socket.connect((host, port))
@@ -28,7 +28,7 @@ class DatabaseClient:
 
 
 try:
-    client = DatabaseClient("127.0.0.1", 5014)
+    client = LocalDatabaseClient("127.0.0.1", 5014)
 
     print(client.execute("""
         CREATE TABLE IF NOT EXISTS central_kv_store (

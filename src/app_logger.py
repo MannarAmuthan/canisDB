@@ -4,8 +4,8 @@ import sys
 from context import Context
 
 
-class Logger:
-    _logger = None
+class LoggerFactory:
+    _logger: logging.Logger = None
 
     @classmethod
     def get_logger(cls) -> logging.Logger:

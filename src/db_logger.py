@@ -3,7 +3,7 @@ import logging
 from context import Context
 
 
-class QueryLogger:
+class QueryLoggerFactory:
     _logger = None
 
     @classmethod
@@ -23,7 +23,7 @@ class QueryLogger:
         return cls._logger
 
 
-class WALLogger:
+class WALLoggerFactory:
     _logger = None
 
     @classmethod
