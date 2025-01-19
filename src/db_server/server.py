@@ -81,10 +81,12 @@ class DatabaseServer:
                             service_name = service_prop['name']
                             service_port = service_prop['replication_port']
                             if service_id != Context.get_id():
-                                self.logger.info(f"Replicating to {service_name}:{service_port} from {Context.get_id()}")
+                                self.logger.info(
+                                    f"Replicating to {service_name}:{service_port} from {Context.get_id()}")
                                 client = DatabaseClient()
                                 client.execute(service_name, int(service_port), command['query'])
-                                self.logger.info(f"Successfully replicated to {service_name}:{service_port} from {Context.get_id()}")
+                                self.logger.info(
+                                    f"Successfully replicated to {service_name}:{service_port} from {Context.get_id()}")
 
                 response = self.execute_query(command)
 

@@ -18,14 +18,6 @@ class Context:
         cls._id = value
 
     @classmethod
-    def get_mode(cls):
-        return cls._mode
-
-    @classmethod
-    def set_mode(cls, value):
-        cls._mode = value
-
-    @classmethod
     def get_db_server_port(cls):
         return cls._db_server_port
 

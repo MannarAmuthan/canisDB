@@ -1,6 +1,6 @@
 # CanisDB
 
-Distributed, scalable database server.
+The lightweight, distributed relational database built using SQLite.
 
 ### Running using docker compose
 

@@ -11,18 +11,21 @@ GRPC_SERVER_PORT = 50051
 
 
 def start_server(port):
-    db_server = DatabaseServer(host='0.0.0.0', port=port, replication_port=DEFAULT_DATABASE_REPLICATION_PORT)
+    db_server = DatabaseServer(host='0.0.0.0',
+                               port=port,
+                               replication_port=DEFAULT_DATABASE_REPLICATION_PORT)
     db_server.start()
 
 
 def start_replication_server(port):
-    db_server = DatabaseServer(host='0.0.0.0', port=port, replication_port=DEFAULT_DATABASE_REPLICATION_PORT)
+    db_server = DatabaseServer(host='0.0.0.0',
+                               port=port,
+                               replication_port=DEFAULT_DATABASE_REPLICATION_PORT)
     db_server.start_for_replication()
 
 
 def initialize_and_get_configurations(parsed_args):
     Context.set_id(parsed_args.id)
-    Context.set_mode(parsed_args.mode)
     Context.set_db_server_port(int(parsed_args.port) if parsed_args.port else DEFAULT_DATABASE_SERVER_PORT)
     Context.set_grpc_server_port(int(parsed_args.grpc_port) if parsed_args.grpc_port else GRPC_SERVER_PORT)
     Context.set_server_url(parsed_args.server_url if parsed_args.server_url else '')
@@ -32,7 +35,7 @@ def initialize_and_get_configurations(parsed_args):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument('mode')
+
     parser.add_argument('-p', '--port')
     parser.add_argument('-id', '--id')
 
