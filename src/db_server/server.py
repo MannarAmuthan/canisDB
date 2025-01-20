@@ -89,7 +89,7 @@ class DatabaseServer:
                 self.logger.info(
                     f"Replicating to {service_name}:{service_port} from {Context.get_id()}")
 
-                self.database_client.execute(service_name, int(service_port), command['query'])
+                self.database_client.execute(service_name, int(service_port), command['query'], command['params'])
                 self.logger.info(
                     f"Successfully replicated to {service_name}:{service_port} from {Context.get_id()}")
 
