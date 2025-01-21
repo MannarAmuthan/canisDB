@@ -84,13 +84,18 @@ try:
     result = client_rep_three.execute("DELETE FROM central_kv_store WHERE key = ?", ["api_key"])
     print(f"Delete result: {result}")
 
+
+    result = client_rep_three.execute("""
+        INSERT INTO central_kv_store (key, value)
+        VALUES ('random', random())
+    """, [])
+
     # Final select to verify all operations
     print("\nFinal state of the database:")
     results = client_rep_three.execute("SELECT * FROM central_kv_store ORDER BY key")
     print("\nKey\t\tValue")
     print("-" * 30)
 
-    # Assuming results contains a 'rows' key with the actual data
     if 'rows' in results:
         for row in results['rows']:
             print(f"{row[0]}\t\t{row[1]}")

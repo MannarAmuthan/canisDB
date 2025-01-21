@@ -9,6 +9,7 @@ from context import Context
 from db_logger import QueryLoggerFactory, WALLoggerFactory
 from db_server.client import DatabaseClient
 from sql.classifier import is_write_operation
+from sql.transformer import transform_sql_query
 
 
 class DatabaseServer:
@@ -59,6 +60,10 @@ class DatabaseServer:
                     break
 
                 command = json.loads(data)
+
+                if not self.is_replication_server:
+                    command['query'] = transform_sql_query(command['query'])
+
                 self.transaction_logger.info(msg=command)
 
                 if is_write_operation(command['query']):
