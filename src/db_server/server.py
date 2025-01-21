@@ -10,6 +10,7 @@ from db_logger import QueryLoggerFactory, WALLoggerFactory
 from db_server.client import DatabaseClient
 from sql.classifier import is_write_operation
 from sql.transformer import transform_sql_query
+from vars import DEFAULT_DATABASE_REPLICATION_PORT
 
 
 class DatabaseServer:
@@ -89,7 +90,7 @@ class DatabaseServer:
         services = json.load(open("config.json"))['services']
         for service_id, service_prop in services.items():
             service_name = service_prop['name']
-            service_port = service_prop['replication_port']
+            service_port = DEFAULT_DATABASE_REPLICATION_PORT
             if service_id != Context.get_id():
                 self.logger.info(
                     f"Replicating to {service_name}:{service_port} from {Context.get_id()}")

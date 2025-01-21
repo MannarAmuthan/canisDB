@@ -1,20 +1,3 @@
-# CanisDB
-
-An experimental, lightweight, distributed relational database built using SQLite.
-
-### Quick Start in Local
-
-1. Build and start service
-
-```
-docker-compose build
-docker-compose up 
-```
-
-2. Execute below code (simple_client.py)
-
-```python
-
 import json
 import socket
 
@@ -81,13 +64,3 @@ try:
 
 finally:
     sock.close()
-
-```
-
-### Running functional tests
-
-1. Run above commands to run in local and wait for all containers to span up.
-2. `pipenv run functional-test`
-
-
-

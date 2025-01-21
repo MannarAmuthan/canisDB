@@ -7,10 +7,7 @@ from context import Context
 from db_server.client import DatabaseClient
 from db_server.server import DatabaseServer
 from app_logger import LoggerFactory
-
-DEFAULT_DATABASE_SERVER_PORT = 5012
-DEFAULT_DATABASE_REPLICATION_PORT = 5022
-GRPC_SERVER_PORT = 50051
+from vars import DEFAULT_DATABASE_SERVER_PORT, DEFAULT_DATABASE_REPLICATION_PORT
 
 
 class Application:
