@@ -7,8 +7,8 @@ An experimental, lightweight, distributed relational database built using SQLite
 1. Build and start service
 
 ```
-docker-compose build
-docker-compose up 
+docker-compose -f compose.local.yaml build
+docker-compose -f compose.local.yaml up
 ```
 
 2. Execute below code (simple_client.py)

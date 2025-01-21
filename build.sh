@@ -1,3 +1,2 @@
-docker-compose build
-docker-compose up
-docker-compose start
+docker-compose -f compose.local.yaml build
+docker-compose -f compose.local.yaml up
