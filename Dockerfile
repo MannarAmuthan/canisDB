@@ -9,7 +9,7 @@ WORKDIR $APP_HOME
 COPY Pipfile .
 COPY Pipfile.lock .
 
-EXPOSE 5003 5012 5022
+EXPOSE 5012 5022 5032
 
 RUN pip3 install pipenv
 RUN pipenv requirements > deploy-requirements.txt

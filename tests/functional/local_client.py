@@ -9,7 +9,7 @@ class LocalDatabaseClient:
         self.socket.connect((host, port))
 
     def execute(self, query: str, params: list = None) -> Dict[str, Any]:
-        """Execute a query on the database db_server"""
+        """Execute a query on the database db"""
         if params is None:
             params = []
 

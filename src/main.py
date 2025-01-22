@@ -4,10 +4,13 @@ import threading
 from pathlib import Path
 
 from context import Context
-from db_server.client import DatabaseClient
-from db_server.server import DatabaseServer
+from db.client import DatabaseClient
+from db.connector import DBConnector
+from db.server import DatabaseServer
 from app_logger import LoggerFactory
-from vars import DEFAULT_DATABASE_SERVER_PORT, DEFAULT_DATABASE_REPLICATION_PORT
+from db.wal_logger import WALLogger
+from gossip import GossipService
+from vars import DEFAULT_DATABASE_SERVER_PORT, DEFAULT_DATABASE_REPLICATION_PORT, LISTENER_PORT
 
 
 class Application:
@@ -15,10 +18,14 @@ class Application:
     def __init__(self,
                  logger: logging.Logger,
                  primary_server: DatabaseServer,
-                 replication_server: DatabaseServer):
+                 replication_server: DatabaseServer,
+                 internal_listener: GossipService,
+                 write_ahead_logger: WALLogger):
         self.logger: logging.Logger = logger
-        self.primary_server = primary_server
-        self.dp_replication_server = replication_server
+        self.primary_server: DatabaseServer = primary_server
+        self.dp_replication_server: DatabaseServer = replication_server
+        self.gossip_service: GossipService = internal_listener
+        self.write_ahead_logger: WALLogger = write_ahead_logger
 
     def start(self):
         self.logger.info("Starting database servers")
@@ -31,6 +38,11 @@ class Application:
                                                        args=())
         database_replication_thread.start()
 
+        internal_listener_thread = threading.Thread(target=self.gossip_service.start,
+                                                    args=())
+        internal_listener_thread.start()
+
+        self.write_ahead_logger.init_logger()
         self.logger.info("Started database servers")
 
 
@@ -56,21 +68,35 @@ if __name__ == "__main__":
     logger_instance: logging.Logger = LoggerFactory.get_logger()
     database_client: DatabaseClient = DatabaseClient(logger_instance)
 
+    db_connector: DBConnector = DBConnector(file_path=
+                                            f'{Context.get_folder()}/database.db')
+
     primary_server_instance: DatabaseServer = DatabaseServer(
         host='0.0.0.0',
         port=DEFAULT_DATABASE_SERVER_PORT,
         logger=logger_instance,
         is_replication_server=False,
-        database_client=database_client)
+        database_client=database_client,
+        db_connector=db_connector)
 
     dp_replication_server_instance: DatabaseServer = DatabaseServer(
         host='0.0.0.0',
         port=DEFAULT_DATABASE_REPLICATION_PORT,
         logger=logger_instance,
         is_replication_server=True,
-        database_client=database_client)
+        database_client=database_client,
+        db_connector=db_connector)
+
+    gossip_service: GossipService = GossipService(
+        host='0.0.0.0',
+        port=LISTENER_PORT,
+        logger=logger_instance)
+
+    wal_logger = WALLogger(database_connector=db_connector)
 
     application = Application(logger=logger_instance,
                               primary_server=primary_server_instance,
-                              replication_server=dp_replication_server_instance)
+                              replication_server=dp_replication_server_instance,
+                              internal_listener=gossip_service,
+                              write_ahead_logger=wal_logger)
     application.start()
