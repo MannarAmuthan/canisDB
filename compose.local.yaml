@@ -5,7 +5,7 @@ services:
       - 5012:5012
       - 5022:5022
       - 5032:5032
-    command: python3 src/main.py --id=1 --folder="local"
+    command: python3 src/main.py --id=1 --folder="local" --role="leader"
     volumes:
       - canis-1:/app
 

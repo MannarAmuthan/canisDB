@@ -2,6 +2,7 @@ class Context:
     """A static class to hold and manage application-wide configuration."""
     _id = None
     _folder = ""
+    _role = ""
 
     # Getters and Setters
     @classmethod
@@ -19,3 +20,11 @@ class Context:
     @classmethod
     def set_folder(cls, value):
         cls._folder = value
+
+    @classmethod
+    def get_role(cls):
+        return cls._role
+
+    @classmethod
+    def set_role(cls, value):
+        cls._role = value
