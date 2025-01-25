@@ -46,6 +46,10 @@ class DatabaseServer:
             except Exception as e:
                 self.logger.info(f"Connection error on {e}")
 
+    def stop(self):
+        self.logger.info(f"Stopping server")
+        self.socket.close()
+
     @abc.abstractmethod
     def handle_client(self, client_socket: socket.socket):
         pass

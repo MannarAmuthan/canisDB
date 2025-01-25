@@ -3,7 +3,6 @@ services:
     build: .
     ports:
       - 5012:5012
-      - 5022:5022
       - 5032:5032
     command: python3 src/main.py --id=1 --folder="local" --role="leader"
     volumes:
@@ -13,7 +12,6 @@ services:
     build: .
     ports:
       - 5013:5012
-      - 5023:5022
       - 5033:5032
     command: python3 src/main.py --id=2 --folder="local"
     volumes:
@@ -23,7 +21,6 @@ services:
     build: .
     ports:
       - 5014:5012
-      - 5024:5022
       - 5034:5032
     command: python3 src/main.py --id=3 --folder="local"
     volumes:
@@ -33,7 +30,6 @@ services:
     build: .
     ports:
       - 5015:5012
-      - 5025:5022
       - 5035:5032
     command: python3 src/main.py --id=4 --folder="local"
     volumes:
