@@ -1,3 +1,4 @@
+import datetime
 import json
 import socket
 from logging import Logger
@@ -41,6 +42,7 @@ class Leader(DatabaseServer):
                 if is_write_operation(command['query']):
                     self.logger.info("Logging into Write Logs")
                     self.write_logger.info(msg=command)
+                    self.wal_logger.log(datetime.datetime.now(), command)
 
                     if self.is_leader:
                         self.replicate(command)

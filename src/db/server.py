@@ -5,6 +5,7 @@ import threading
 from logging import Logger
 
 from db.connector import DBConnector
+from db.wal_logger import WALLogger
 from db_logger import QueryLoggerFactory, WriteLoggerFactory
 from db.client import DatabaseClient
 
@@ -27,8 +28,9 @@ class DatabaseServer:
         self.write_logger = WriteLoggerFactory.get_logger()
 
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
         self.db_connector = db_connector
+
+        self.wal_logger = WALLogger(self.db_connector)
 
     def start(self):
 

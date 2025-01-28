@@ -1,3 +1,4 @@
+import datetime
 import json
 import socket
 from logging import Logger
@@ -44,10 +45,11 @@ class Follower(DatabaseServer):
                                                             service_port,
                                                             command
                                                             )
-
-                else:
-                    self.logger.info("Logging into Write Logs")
+                elif write_operation:
                     self.write_logger.info(msg=command)
+                    self.wal_logger.log(datetime.datetime.now(), command)
+                    response = self.db_connector.execute_query(command)
+                else:
                     response = self.db_connector.execute_query(command)
 
                 client_socket.send(json.dumps(response).encode())

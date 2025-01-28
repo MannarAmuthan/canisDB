@@ -8,6 +8,7 @@ from db.connector import DBConnector
 class WALLogger:
     def __init__(self,
                  database_connector: DBConnector):
+        self.log_number = 1
         self.database_connector = database_connector
 
     def init_logger(self):
@@ -28,7 +29,6 @@ class WALLogger:
             self.database_connector.execute_query(command=setup_command)
 
     def log(self,
-            log_number: int,
             log_date: datetime,
             command: Dict[str, Any]):
         insert_command = {
@@ -37,11 +37,13 @@ class WALLogger:
                 VALUES (?, ?, ?, ?)
             """,
             "params": [
-                log_number,
+                self.log_number,
                 log_date,
                 command['query'],
                 json.dumps(command['params'])
             ]
         }
+
+        self.log_number += 1
 
         self.database_connector.execute_query(insert_command)
