@@ -10,17 +10,13 @@ class DatabaseClient:
     def __init__(self, logger: Logger):
         self.logger = logger
 
-    def execute(self, host: str, port: int, query: str, params: list = None) -> Dict[str, Any]:
+    def execute(self,
+                host: str,
+                port: int,
+                command: dict) -> Dict[str, Any]:
         """Execute a query on the database db"""
         client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         client_socket.connect((host, port))
-        if params is None:
-            params = []
-
-        command = {
-            "query": query,
-            "params": params
-        }
 
         self.logger.info(f"Started sending command to ({host}: {port})")
         send_json(client_socket, command)

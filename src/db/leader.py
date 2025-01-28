@@ -1,6 +1,5 @@
 import json
 import socket
-import threading
 from logging import Logger
 
 from context import Context
@@ -68,6 +67,12 @@ class Leader(DatabaseServer):
                 self.logger.info(
                     f"Replicating to {service_name}:{service_port} from {Context.get_id()}")
 
-                self.database_client.execute(service_name, int(service_port), command['query'], command['params'])
+                command = {
+                    "query": command['query'],
+                    "params": command['params'] if command['params'] else [],
+                    "replicaRequest": True
+                }
+
+                self.database_client.execute(service_name, int(service_port), command)
                 self.logger.info(
                     f"Successfully replicated to {service_name}:{service_port} from {Context.get_id()}")

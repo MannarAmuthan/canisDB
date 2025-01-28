@@ -1,4 +1,5 @@
 import json
+import random
 
 from tests.functional.local_client import LocalDatabaseClient
 
@@ -51,10 +52,12 @@ def test_canis():
     client_rep_three = LocalDatabaseClient("127.0.0.1", 5014)
     client_rep_four = LocalDatabaseClient("127.0.0.1", 5015)
 
+    clients = [client_rep_one, client_rep_two, client_rep_three, client_rep_four]
     for command in setup_commands:
         param_list = command.get('param_list', [[]])
         for param in param_list:
-            client_rep_one.execute(command['query'], param)
+            random_client = random.choice(clients)
+            random_client.execute(command['query'], param)
 
     index = 0
 

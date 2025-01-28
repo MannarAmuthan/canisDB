@@ -1,15 +1,11 @@
 import json
 import socket
-import threading
 from logging import Logger
 
-from context import Context
 from db.connector import DBConnector
 from db.server import DatabaseServer
-from db_logger import QueryLoggerFactory, WriteLoggerFactory
 from db.client import DatabaseClient
 from sql.classifier import is_write_operation
-from sql.transformer import transform_sql_query
 from vars import DEFAULT_DATABASE_SERVER_PORT
 
 
@@ -36,11 +32,23 @@ class Follower(DatabaseServer):
 
                 self.transaction_logger.info(msg=command)
 
-                if is_write_operation(command['query']):
+                is_coming_from_leader = command.get('replicaRequest', None)
+                write_operation = is_write_operation(command['query'])
+
+                should_redirect_to_leader = write_operation and not is_coming_from_leader
+
+                if should_redirect_to_leader:
+                    service_name, service_port = self.get_leader_service_details()
+                    self.logger.info("Submitting the query to leader")
+                    response = self.database_client.execute(service_name,
+                                                            service_port,
+                                                            command
+                                                            )
+
+                else:
                     self.logger.info("Logging into Write Logs")
                     self.write_logger.info(msg=command)
-
-                response = self.db_connector.execute_query(command)
+                    response = self.db_connector.execute_query(command)
 
                 client_socket.send(json.dumps(response).encode())
 
@@ -52,3 +60,14 @@ class Follower(DatabaseServer):
                 break
 
         client_socket.close()
+
+    def get_leader_service_details(self):
+        services = json.load(open("config.json"))['services']
+        for service_id, service_prop in services.items():
+            service_name = service_prop['name']
+            service_port = DEFAULT_DATABASE_SERVER_PORT
+            if service_prop.get('leader', None):
+                return service_name, int(service_port)
+
+        self.logger.error("Could not find leader details")
+        raise Exception("Could not find leader details")

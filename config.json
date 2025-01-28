@@ -2,7 +2,8 @@
   "services": {
     "1": {
       "name": "canis-rep-1",
-      "replication_port": "5022"
+      "replication_port": "5022",
+      "leader": true
     },
     "2": {
       "name": "canis-rep-2",
