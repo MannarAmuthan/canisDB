@@ -1,48 +1,37 @@
-import json
-import socket
+from canis_client import CanisClient
 
-# Connect to the database server
-sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-sock.connect(("127.0.0.1", 5012))
+canis_client = CanisClient()
+canis_client.connect("127.0.0.1", 5012)
 
 try:
-
     print("Creating table...")
-    command = {
-        "query": """
+    result = canis_client.execute("""
             CREATE TABLE IF NOT EXISTS kv_store (
                 key TEXT UNIQUE,
                 value TEXT
             )
-        """,
-        "params": []
-    }
-    sock.send(json.dumps(command).encode())
-    result = json.loads(sock.recv(4096).decode())
+        """, [])
+
     print(f"Create table result: {result}")
 
     # Insert a test record
     print("\nInserting test data...")
-    command = {
-        "query": """
+    result = canis_client.execute(
+        """
             INSERT INTO kv_store (key, value)
             VALUES (?, ?)
         """,
-        "params": ["user_1", "John Doe"]
-    }
-    sock.send(json.dumps(command).encode())
-    result = json.loads(sock.recv(4096).decode())
+        ["user_1", "John Doe"]
+    )
+
     print(f"Insert result: {result}")
 
     # Read and display the record
     print("\nReading data...")
-    command = {
-        "query": "SELECT * FROM kv_store",
-        "params": []
-    }
-    sock.send(json.dumps(command).encode())
-    result = json.loads(sock.recv(4096).decode())
-
+    result = canis_client.execute(
+        "SELECT * FROM kv_store",
+        []
+    )
 
     """
     
@@ -63,4 +52,4 @@ try:
         print("No data found")
 
 finally:
-    sock.close()
+    canis_client.close()

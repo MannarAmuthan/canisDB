@@ -1,7 +1,6 @@
-import json
 import random
 
-from tests.functional.local_client import LocalDatabaseClient
+from tests.functional.canis_client import CanisClient
 
 
 def test_canis():
@@ -47,10 +46,14 @@ def test_canis():
 
     ]
 
-    client_rep_one = LocalDatabaseClient("127.0.0.1", 5012)
-    client_rep_two = LocalDatabaseClient("127.0.0.1", 5013)
-    client_rep_three = LocalDatabaseClient("127.0.0.1", 5014)
-    client_rep_four = LocalDatabaseClient("127.0.0.1", 5015)
+    client_rep_one = CanisClient()
+    client_rep_one.connect("127.0.0.1", 5012)
+    client_rep_two = CanisClient()
+    client_rep_two.connect("127.0.0.1", 5013)
+    client_rep_three = CanisClient()
+    client_rep_three.connect("127.0.0.1", 5014)
+    client_rep_four = CanisClient()
+    client_rep_four.connect("127.0.0.1", 5015)
 
     clients = [client_rep_one, client_rep_two, client_rep_three, client_rep_four]
     for command in setup_commands:
@@ -64,7 +67,7 @@ def test_canis():
     random_values = []
 
     for _c in [client_rep_four, client_rep_three, client_rep_two, client_rep_one]:
-        results = client_rep_three.execute("SELECT * FROM central_kv_store ORDER BY key")
+        results = client_rep_three.execute("SELECT * FROM central_kv_store ORDER BY key", params=[])
 
         print("-" * 30)
 
