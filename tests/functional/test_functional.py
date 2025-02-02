@@ -1,6 +1,6 @@
 import random
 
-from tests.functional.canis_client import CanisClient
+from canis_client import CanisClient
 
 
 def test_canis():
