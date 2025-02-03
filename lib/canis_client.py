@@ -8,9 +8,15 @@ class CanisClient:
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
     def connect(self, host: str, port: int):
-        self.socket.connect((host, port))
+        try:
+            self.socket.connect((host, port))
+        except Exception as exception:
+            print("Could not connect to canis db servers")
+            raise exception
 
-    def execute(self, query: str, params: list[str]):
+    def execute(self, query: str, params = None):
+        if params is None:
+            params = []
         command = {
             "query": query,
             "params": params

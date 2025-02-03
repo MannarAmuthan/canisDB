@@ -10,7 +10,7 @@ try:
                 key TEXT UNIQUE,
                 value TEXT
             )
-        """, [])
+        """)
 
     print(f"Create table result: {result}")
 
@@ -29,8 +29,7 @@ try:
     # Read and display the record
     print("\nReading data...")
     result = canis_client.execute(
-        "SELECT * FROM kv_store",
-        []
+        "SELECT * FROM kv_store"
     )
 
     """
