@@ -11,8 +11,7 @@ from db.leader import Leader
 from db.server import DatabaseServer
 from app_logger import LoggerFactory
 from db.wal_logger import WALLogger
-from gossip import GossipService
-from vars import DEFAULT_DATABASE_SERVER_PORT, LISTENER_PORT
+from vars import DEFAULT_DATABASE_SERVER_PORT
 
 
 def initialize_and_get_configurations(parsed_args):
