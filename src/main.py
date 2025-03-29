@@ -59,15 +59,9 @@ if __name__ == "__main__":
             database_client=database_client,
             db_connector=db_connector)
 
-    gossip_service: GossipService = GossipService(
-        host='0.0.0.0',
-        port=LISTENER_PORT,
-        logger=logger_instance)
-
     wal_logger = WALLogger(database_connector=db_connector)
 
     application = Application(logger=logger_instance,
                               database_server=server_instance,
-                              internal_listener=gossip_service,
                               write_ahead_logger=wal_logger)
     application.start()
