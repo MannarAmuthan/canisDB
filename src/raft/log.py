@@ -51,6 +51,7 @@ class RaftLog:
         result = self.database_connector.execute_query(insert_command)
 
         if result['status'] != 'success':
+            print(result)
             raise Exception(f"Prepare failed for {unique_id}")
 
     def commit(self,
@@ -65,9 +66,11 @@ class RaftLog:
         result = self.database_connector.execute_query(get_command)
 
         if result['status'] != 'success':
+            print(result)
             raise Exception(f"Commit failed for {unique_id}")
 
         if len(result['rows']) != 1:
+            print(result)
             raise Exception(f"Could not find valid logs to commit for {unique_id}")
 
         query_text = result['rows'][0][0]

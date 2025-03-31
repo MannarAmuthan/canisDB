@@ -8,6 +8,7 @@ from db.connector import DBConnector
 from db.wal_logger import WALLogger
 from db_logger import QueryLoggerFactory, WriteLoggerFactory
 from db.client import DatabaseClient
+from raft.log import RaftLog
 
 
 class DatabaseServer:
@@ -30,7 +31,8 @@ class DatabaseServer:
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.db_connector = db_connector
 
-        self.wal_logger = WALLogger(self.db_connector)
+        self.raft_log = RaftLog(database_connector=db_connector)
+        self.raft_log.init_logger()
 
     def start(self):
 

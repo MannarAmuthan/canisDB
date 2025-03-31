@@ -34,7 +34,9 @@ class Follower(DatabaseServer):
                 self.transaction_logger.info(msg=command)
 
                 is_coming_from_leader = command.get('replicaRequest', None)
-                write_operation = is_write_operation(command['query'])
+                is_commit_request = command.get('isCommitRequest', False)
+                is_prepare_request = not is_commit_request
+                write_operation = is_write_operation(command['query']) if 'query' in command else False
 
                 should_redirect_to_leader = write_operation and not is_coming_from_leader
 
@@ -45,10 +47,19 @@ class Follower(DatabaseServer):
                                                             service_port,
                                                             command
                                                             )
-                elif write_operation:
-                    self.write_logger.info(msg=command)
-                    self.wal_logger.log(datetime.datetime.now(), command)
-                    response = self.db_connector.execute_query(command)
+                elif write_operation and is_prepare_request:
+                    self.logger.info(f"Applying prepare for {command.get('unique_id')}")
+                    response = self.raft_log.prepare(
+                        unique_id=command.get('unique_id'),
+                        log_date=datetime.datetime.now(),
+                        command=command
+                    )
+                elif is_commit_request:
+                    self.logger.info(f"Applying commit for {command.get('unique_id')}")
+                    response = self.raft_log.commit(
+                        unique_id=command.get('unique_id'),
+                        commit_date=datetime.datetime.now()
+                    )
                 else:
                     response = self.db_connector.execute_query(command)
 
