@@ -16,3 +16,4 @@ python_version = "3.9"
 
 [scripts]
 functional-test = "python -m pytest tests/functional"
+unit-test = "python -m pytest tests/unit"
